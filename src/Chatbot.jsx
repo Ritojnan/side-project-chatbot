@@ -45,15 +45,9 @@ import compromise from "compromise";
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [inputText, setInputText] = useState("");
-  const [outputText, setOutputText] = useState("");
 
-  function extractMainWord(input) {
-    const doc = compromise(input);
-    const mainWord = doc.nouns().toSingular().out("text");
-    return mainWord;
-  }
   function getRandomPhrase(input, link) {
+    console.log(input, link);
     const phrases = [
       "Sure, we have a page dedicated to",
       "Our website has a section on",
@@ -104,7 +98,7 @@ const Chatbot = () => {
     event.preventDefault();
 
     const punctuations = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
-    const strWithoutPunctuation = inputText.replace(punctuations, "");
+    const strWithoutPunctuation = inputValue.replace(punctuations, "");
     const doc = compromise(strWithoutPunctuation);
     const nouns = doc.normalize().nouns().toSingular().out("array");
     let mainTopics = [];
@@ -117,14 +111,203 @@ const Chatbot = () => {
     //   "a natural disaster",
     //   "my area?"
     // ]
-
+    const disasterWords = {
+      avalanche: ['snow', 'mountain', 'ice', 'slope', 'danger'],
+      earthquake: ['tremor', 'quake', 'seismic', 'fault', 'magnitude'],
+      hurricane: ['storm', 'wind', 'rain', 'flood', 'category'],
+      tornado: ['twister', 'wind', 'funnel', 'damage', 'warning'],
+      flood: ['water', 'overflow', 'rain', 'river', 'disaster'],
+      wildfire: ['fire', 'burn', 'smoke', 'evacuate', 'flame'],
+      tsunami: ['wave', 'ocean', 'earthquake', 'coast', 'warning'],
+      volcano: ['eruption', 'lava', 'smoke', 'ash', 'active'],
+      cyclone: ['storm', 'wind', 'rain', 'coast', 'destruction'],
+      drought: ['dry', 'water', 'crop', 'heat', 'famine'],
+      blizzard: ['snow', 'wind', 'cold', 'freeze', 'storm'],
+      landslide: ['earth', 'slide', 'rocks', 'debris', 'slope'],
+      hailstorm: ['hail', 'ice', 'storm', 'damage', 'crop'],
+      typhoon: ['storm', 'wind', 'rain', 'coast', 'destruction'],
+      heatWave: ['heat', 'hot', 'temperature', 'sun', 'wave'],
+      coldWave: ['cold', 'temperature', 'freeze', 'snow', 'wave'],
+      pandemic: ['disease', 'virus', 'outbreak', 'pandemic', 'infect'],
+      chemicalSpill: ['chemical', 'spill', 'toxic', 'poison', 'contamination'],
+      gasLeak: ['gas', 'leak', 'toxic', 'poison', 'contamination'],
+      nuclearDisaster: ['nuclear', 'radiation', 'accident', 'leak', 'meltdown'],
+      biologicalDisaster: ['biological', 'disease', 'outbreak', 'contagious', 'virus'],
+      cyberAttack: ['cyber', 'attack', 'hacker', 'security', 'data'],
+      blackout: ['power', 'outage', 'electricity', 'dark', 'grid'],
+      asteroidImpact: ['asteroid', 'impact', 'collision', 'space', 'danger'],
+      meteorStrike: ['meteor', 'strike', 'impact', 'space', 'destruction'],
+      zombieApocalypse: ['zombie', 'apocalypse', 'undead', 'survival', 'outbreak'],
+      alienInvasion: ['alien', 'invasion', 'extraterrestrial', 'spaceship', 'abduction'],
+      robotUprising: ['robot', 'uprising', 'machine', 'autonomous', 'rebellion'],
+      monsterAttack: ['monster', 'attack', 'creature', 'giant', 'rampage']
+    };
+    
+    const disasterList = {
+      avalanche: '/disaster/avalanche',
+      asteroidImpact: '/disaster/asteroid-impact',
+      blizzard: '/disaster/blizzard',
+      chemicalExplosion: '/disaster/chemical-explosion',
+      cyclone: '/disaster/cyclone',
+      drought: '/disaster/drought',
+      earthquake: '/disaster/earthquake',
+      famine: '/disaster/famine',
+      flood: '/disaster/flood',
+      gasLeak: '/disaster/gas-leak',
+      hailstorm: '/disaster/hailstorm',
+      heatWave: '/disaster/heat-wave',
+      hurricane: '/disaster/hurricane',
+      iceStorm: '/disaster/ice-storm',
+      insectInfestation: '/disaster/insect-infestation',
+      insectPlague: '/disaster/insect-plague',
+      landslide: '/disaster/landslide',
+      marinePollution: '/disaster/marine-pollution',
+      meteorImpact: '/disaster/meteor-impact',
+      nuclearAccident: '/disaster/nuclear-accident',
+      nuclearExplosion: '/disaster/nuclear-explosion',
+      pandemic: '/disaster/pandemic',
+      powerOutage: '/disaster/power-outage',
+      quake: '/disaster/quake',
+      radiationExposure: '/disaster/radiation-exposure',
+      radiationLeak: '/disaster/radiation-leak',
+      radioactiveContamination: '/disaster/radioactive-contamination',
+      snowstorm: '/disaster/snowstorm',
+      tornado: '/disaster/tornado',
+      tsunami: '/disaster/tsunami',
+      typhoon: '/disaster/typhoon',
+      volcano: '/disaster/volcano',
+      volcanicEruption: '/disaster/volcanic-eruption',
+      wildfire: '/disaster/wildfire',
+    };
+    
     // List of predetermined words and their corresponding links here
     const wordList = {
+      earthquake: "/disaster/earthquake",
+      hurricane: "/disaster/hurricane",
+      tornado: "/disaster/tornado",
+      flood: "/disaster/flood",
+      wildfire: "/disaster/wildfire",
+      drought: "/disaster/drought",
+      tsunami: "/disaster/tsunami",
+      volcanicEruption: "/disaster/volcanic-eruption",
+      pandemic: "/disaster/pandemic",
+      terroristAttack: "/disaster/terrorist-attack",
+      cyclone: "/disaster/cyclone",
+      landslide: "/disaster/landslide",
+      blizzard: "/disaster/blizzard",
+      heatWave: "/disaster/heat-wave",
+      avalanche: "/disaster/avalanche",
+      hailstorm: "/disaster/hailstorm",
+      epidemic: "/disaster/epidemic",
+      blackout: "/disaster/blackout",
+      chemicalSpill: "/disaster/chemical-spill",
+      thunderstorm: "/disaster/thunderstorm",
+      iceStorm: "/disaster/ice-storm",
+      mudslide: "/disaster/mudslide",
+      winterStorm: "/disaster/winter-storm",
+      drought: "/disaster/drought",
+      extremeCold: "/disaster/extreme-cold",
+      extremeHeat: "/disaster/extreme-heat",
+      forestFire: "/disaster/forest-fire",
+      landslip: "/disaster/landslip",
+      powerOutage: "/disaster/power-outage",
+      sinkhole: "/disaster/sinkhole",
+      stormSurge: "/disaster/storm-surge",
+      typhoon: "/disaster/typhoon",
+      acidRain: "/disaster/acid-rain",
+      dustStorm: "/disaster/dust-storm",
+      blizzard: "/disaster/blizzard",
+      drought: "/disaster/drought",
+      flashFlood: "/disaster/flash-flood",
+      hailstorm: "/disaster/hailstorm",
+      landslide: "/disaster/landslide",
+      lighteningStrike: "/disaster/lightening-strike",
+      mudflow: "/disaster/mudflow",
+      pandemicFlu: "/disaster/pandemic-flu",
+      solarFlare: "/disaster/solar-flare",
+      spaceDebrisImpact: "/disaster/space-debris-impact",
+      superOutbreak: "/disaster/super-outbreak",
+      thunderstorm: "/disaster/thunderstorm",
+      tornado: "/disaster/tornado",
+      volcanicWinter: "/disaster/volcanic-winter",
+      acidification: "/disaster/acidification",
+      blizzard: "/disaster/blizzard",
+      coralBleaching: "/disaster/coral-bleaching",
+      cyclone: "/disaster/cyclone",
+      drought: "/disaster/drought",
+      extremeWeather: "/disaster/extreme-weather",
+      famine: "/disaster/famine",
+      flashFlood: "/disaster/flash-flood",
+      forestFire: "/disaster/forest-fire",
+      hailstorm: "/disaster/hailstorm",
+      tornado: "/disaster/tornado",
+      flood: "/disaster/flood",
+      wildfire: "/disaster/wildfire",
+      fire: "/disaster/fire",
+      drought: "/disaster/drought",
+      volcanic: "/disaster/volcanic-eruption",
+      eruption: "/disaster/volcanic-eruption",
+      terroristAttack: "/disaster/terrorist-attack",
+      insectInfestation: "/disaster/insect-infestation",
+      landslide: "/disaster/landslide",
+      marinePollution: "/disaster/marine-pollution",
+      radioactiveContamination: "/disaster/radioactive-contamination",
+      tornado: "/disaster/tornado",
+      volcanicEruption: "/disaster/volcanic-eruption",
+      wildlandFire: "/disaster/wildland-fire",
+      avalanche: "/disaster/avalanche",
+      blizzard: "/disaster/blizzard",
+      dustStorm: "/disaster/dust-storm",
+      extremeHeat: "/disaster/extreme-heat",
+      flood: "/disaster/flood",
+      gasLeak: "/disaster/gas-leak",
+      hailstorm: "/disaster/hailstorm",
+      insectPlague: "/disaster/insect-plague",
+      landslide: "/disaster/landslide",
+      radiationLeak: "/disaster/radiation-leak",
+      snowstorm: "/disaster/snowstorm",
+      tornado: "/disaster/tornado",
+      typhoon: "/disaster/typhoon",
+      volcano: "/disaster/volcano",
+      wildfire: "/disaster/wildfire",
+      avalanche: "/disaster/avalanche",
+      blizzard: "/disaster/blizzard",
+      cyclone: "/disaster/cyclone",
+      drought: "/disaster/drought",
+      famine: "/disaster/famine",
+      flood: "/disaster/flood",
+      hailstorm: "/disaster/hailstorm",
+      iceStorm: "/disaster/ice-storm",
+      landslide: "/disaster/landslide",
+      meteorImpact: "/disaster/meteor-impact",
+      powerOutage: "/disaster/power-outage",
+      quake: "/disaster/quake",
+      radiationExposure: "/disaster/radiation-exposure",
+      snowstorm: "/disaster/snowstorm",
+      tornado: "/disaster/tornado",
+      tsunami: "/disaster/tsunami",
+      volcanicEruption: "/disaster/volcanic-eruption",
+      wildfire: "/disaster/wildfire",
+      asteroidImpact: "/disaster/asteroid-impact",
+      blizzard: "/disaster/blizzard",
+      chemicalExplosion: "/disaster/chemical-explosion",
+      cyclone: "/disaster/cyclone",
+      drought: "/disaster/drought",
+      famine: "/disaster/famine",
+      flood: "/disaster/flood",
+      hailstorm: "/disaster/hailstorm",
+      iceStorm: "/disaster/ice-storm",
+      landslide: "/disaster/landslide",
+      nuclear: "/disaster/nuclear-accident",//nuclearMeltdown explosion war
+      oilSpill: "/disaster/oil-spill,",
+
+      //keyWord : relative links to pagesk
       emergency: "emergency",
       shelter: "shelter",
       evacuation: "evacuation",
       // disasterReliefOrganizations: 'disaster relief organizations',
-      firstaid: "firstaid",
+      first: "firstaid",
+      aid: "firstaid",
       water: "water",
       food: "food",
       safe: "safetytips",
@@ -142,58 +325,35 @@ const Chatbot = () => {
       fund: "funds",
     };
 
-    const links = mainTopics.filter((noun) => wordList[noun] != undefined);
-    const uniqueLinks = Array.from(new Set(links));
-    console.log(uniqueLinks)
+    const presentWords = mainTopics.filter(
+      (noun) => wordList[noun] != undefined
+    );
+    let chatbotText = [];
+    presentWords.forEach((word) => {
+      chatbotText = chatbotText.concat([[word, wordList[word]]]);
+    });
 
-    if (uniqueLinks.length === 1) {
-      setOutputText(
-        `Here's a link related to "${nouns.join(", ")}": ${uniqueLinks[0]}`
-      );
-    } else if (uniqueLinks.length === 0) {
-      setOutputText(
-        `Sorry, I don't have a link related to "${nouns.join(", ")}".`
-      );
-    } else {
-      setOutputText(
-        `I found multiple links related to "${nouns.join(
-          ", "
-        )}": ${uniqueLinks.join(", ")}`
-      );
-    }
-
-    setInputText("");
-  };
-
-  const handleMessageSubmit = (event) => {
-    event.preventDefault();
-
-    // Analyze user input with Compromise.js
-    const doc = compromise(inputValue);
-
-    // Check for specific keywords and generate output based on context
-    let output = "";
-    if (doc.has("hi") || doc.has("hello")) {
-      output += "Hi there.";
-    }
-    if (doc.has("#QuestionWord") && doc.has("find")) {
-      const context = doc.match("#Noun").text();
-      output += `Here is the link to ${context}: https://www.example.com/${context}`;
-    } else if (doc.has("#QuestionWord") && doc.has("provide")) {
-      const context = doc.match("#Noun").text();
-      output += `Here is the link you requested for ${context}: https://www.example.com/${context}`;
-    } else {
-      output += "I'm sorry, I didn't understand your request.";
-    }
-
-    // Update messages with user input and chatbot output
+    console.log(chatbotText);
     setMessages((prevMessages) => [
       ...prevMessages,
-      { text: inputValue, sender: "user" },
-      { text: output, sender: "chatbot" },
+      { text: inputValue, sender: "User" },
     ]);
+    if (chatbotText.length == 0) {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          text: "Sorry, I don't have any link related to your queries 😔",
+          sender: "Chatbot",
+        },
+      ]);
+    }
+    chatbotText.forEach((line) => {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: getRandomPhrase(line[0], line[1]), sender: "Chatbot" },
+      ]);
+    });
 
-    // Clear input field
     setInputValue("");
   };
 
@@ -204,20 +364,16 @@ const Chatbot = () => {
         <div>
           {messages.map((message, index) => (
             <div key={index} className={message.sender}>
-              {message.text}
+              {message.sender}:{message.text}
             </div>
           ))}
         </div>
-        {/* <form onSubmit={handleMessageSubmit}> */}
         <form onSubmit={handleSubmit}>
           <input
             type="text"
-            // value={inputValue}
-            value={inputText}
-            // onChange={(event) => setInputValue(event.target.value)}
-            onChange={(event) => setInputText(event.target.value)}
+            value={inputValue}
+            onChange={(event) => setInputValue(event.target.value)}
           />
-          <p>{outputText}</p>
           <button type="submit">Send</button>
         </form>
       </div>
